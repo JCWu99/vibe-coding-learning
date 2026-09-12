@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="一個簡潔、專注於每日節奏的個人 Dashboard。">
+  <title>Daymark | Personal Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <a class="brand" href="index.html" aria-label="Daymark 首頁">
+        <span class="brand-mark" aria-hidden="true">✦</span>
+        <span>DAYMARK</span>
+      </a>
+      <span class="header-label">PERSONAL OPERATING SYSTEM</span>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span>YOUR DAY, IN VIEW</p>
+          <h1 id="page-title">Make room<br><em>for good work.</em></h1>
+          <p class="hero-intro">把今天的節奏整理好，讓重要的事自然浮現。</p>
+        </div>
+        <div class="time-panel" aria-label="目前時間資訊">
+          <time class="clock" id="clock" datetime="">00:00:00</time>
+          <time class="date" id="date" datetime="">載入日期中...</time>
+        </div>
+      </section>
+
+      <section class="dashboard-grid" aria-label="個人 Dashboard 功能">
+        <article class="dashboard-card card-lime" tabindex="0" role="button" aria-pressed="false" data-card="focus" data-message="專注模式已準備好，先從最重要的一件事開始。">
+          <div class="card-topline">
+            <span class="card-index">01 / 04</span>
+            <span class="card-icon" aria-hidden="true">◒</span>
+          </div>
+          <div class="card-content">
+            <p class="card-kicker">FOCUS MODE</p>
+            <h2>專注時段</h2>
+            <p>留一段完整的時間，處理今天最值得完成的事。</p>
+          </div>
+          <div class="card-footer">
+            <span class="card-action">開始專注</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+          </div>
+        </article>
+
+        <article class="dashboard-card card-coral" tabindex="0" role="button" aria-pressed="false" data-card="notes" data-message="靈感已就位，寫下一句話也算是開始。">
+          <div class="card-topline">
+            <span class="card-index">02 / 04</span>
+            <span class="card-icon" aria-hidden="true">✎</span>
+          </div>
+          <div class="card-content">
+            <p class="card-kicker">QUICK CAPTURE</p>
+            <h2>靈感筆記</h2>
+            <p>把腦中剛冒出的想法留下來，不讓它被下一個通知帶走。</p>
+          </div>
+          <div class="card-footer">
+            <span class="card-action">寫點什麼</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+          </div>
+        </article>
+
+        <article class="dashboard-card card-blue" tabindex="0" role="button" aria-pressed="false" data-card="rhythm" data-message="節奏穩定。記得讓休息成為計畫的一部分。">
+          <div class="card-topline">
+            <span class="card-index">03 / 04</span>
+            <span class="card-icon" aria-hidden="true">⌁</span>
+          </div>
+          <div class="card-content">
+            <p class="card-kicker">DAILY RHYTHM</p>
+            <h2>今日節奏</h2>
+            <p>看看一天如何流動，在忙碌與留白之間找到自己的速度。</p>
+          </div>
+          <div class="card-footer">
+            <span class="card-action">查看節奏</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+          </div>
+        </article>
+
+        <article class="dashboard-card card-lilac" tabindex="0" role="button" aria-pressed="false" data-card="reset" data-message="空間已清好。下一步，從一個小動作開始。">
+          <div class="card-topline">
+            <span class="card-index">04 / 04</span>
+            <span class="card-icon" aria-hidden="true">↺</span>
+          </div>
+          <div class="card-content">
+            <p class="card-kicker">RESET SPACE</p>
+            <h2>清理一下</h2>
+            <p>關掉不需要的分頁，把注意力還給眼前真正重要的畫面。</p>
+          </div>
+          <div class="card-footer">
+            <span class="card-action">開始整理</span>
+            <span class="arrow" aria-hidden="true">↗</span>
+          </div>
+        </article>
+      </section>
+
+      <div class="interaction-note" id="interaction-note" role="status" aria-live="polite">
+        <span class="note-symbol" aria-hidden="true">+</span>
+        <span>選一張卡片，讓今天往前一步。</span>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+      <span>DAYMARK / 01</span>
+      <span>DESIGNED FOR A CLEARER DAY</span>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
