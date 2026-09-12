@@ -324,12 +324,17 @@ function loadRhythm() {
     }
 
     const rhythm = JSON.parse(storedRhythm);
-    const validItems = Array.isArray(rhythm.items) && rhythm.items.every((item) => (
-      item && typeof item.id === "string" && typeof item.time === "string" &&
-      /^\d{2}:\d{2}$/.test(item.time) && typeof item.title === "string"
-    ));
+    const today = getLocalDateKey();
+    const isValidDate = typeof rhythm.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(rhythm.date);
+    const validItems = Array.isArray(rhythm.items)
+      ? rhythm.items.filter((item) => (
+        item && typeof item.id === "string" && item.id.trim() !== "" &&
+        typeof item.time === "string" && isValidRhythmTime(item.time) &&
+        typeof item.title === "string" && item.title.trim() !== ""
+      ))
+      : [];
 
-    rhythmItems = rhythm.date === getLocalDateKey() && validItems ? rhythm.items : [];
+    rhythmItems = isValidDate && rhythm.date === today ? validItems : [];
     renderRhythm();
   } catch (error) {
     rhythmItems = [];
