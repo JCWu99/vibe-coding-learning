@@ -8,6 +8,7 @@
   --moss: #7e8a68;
   --ochre: #c99c54;
   --blue: #a8c8c5;
+  --error: #9f2935;
   --shadow: 0 22px 42px rgba(32, 29, 26, 0.14);
 }
 
@@ -491,6 +492,194 @@ h2 {
   opacity: 0.7;
 }
 
+.rhythm-mode {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid currentColor;
+}
+
+.dashboard-card[data-card="rhythm"].is-active .rhythm-mode {
+  display: block;
+}
+
+.dashboard-card[data-card="rhythm"].is-active .card-footer {
+  display: none;
+}
+
+.rhythm-heading,
+.rhythm-footer,
+.rhythm-item,
+.rhythm-form {
+  display: flex;
+  align-items: center;
+}
+
+.rhythm-heading,
+.rhythm-footer {
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rhythm-heading {
+  margin-bottom: 12px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rhythm-mode-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.rhythm-form {
+  position: relative;
+  gap: 6px;
+  align-items: stretch;
+  margin-bottom: 18px;
+}
+
+.rhythm-input {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: rgba(233, 229, 220, 0.12);
+  color: inherit;
+  font: inherit;
+  font-size: 0.68rem;
+}
+
+.rhythm-time-input {
+  flex: 0 0 76px;
+}
+
+.rhythm-time-error {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  width: 150px;
+  color: var(--error);
+  font-size: 0.58rem;
+  line-height: 1.25;
+}
+
+.rhythm-title-input {
+  flex: 1 1 auto;
+  width: 0;
+}
+
+.rhythm-input::placeholder {
+  color: currentColor;
+  opacity: 0.62;
+}
+
+.rhythm-input:focus-visible,
+.rhythm-control:focus-visible,
+.rhythm-item-control:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.rhythm-control,
+.rhythm-item-control {
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.rhythm-control {
+  min-width: 49px;
+  padding: 8px 9px;
+}
+
+.rhythm-control:hover,
+.rhythm-control:focus-visible,
+.rhythm-item-control:hover,
+.rhythm-item-control:focus-visible {
+  background: var(--paper);
+  color: var(--wine);
+}
+
+.rhythm-list {
+  margin-top: 12px;
+}
+
+.rhythm-item {
+  display: grid;
+  grid-template-columns: 43px minmax(0, 1fr) auto;
+  gap: 7px;
+  padding: 8px 0;
+  border-top: 1px solid rgba(233, 229, 220, 0.42);
+}
+
+.rhythm-item-time {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+}
+
+.rhythm-item-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.rhythm-item-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.rhythm-item-control {
+  padding: 5px 6px;
+  font-size: 0.54rem;
+}
+
+.rhythm-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 14px;
+  padding: 13px 0;
+  border-top: 1px solid rgba(233, 229, 220, 0.42);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.rhythm-empty[hidden] {
+  display: none;
+}
+
+.rhythm-empty span,
+.rhythm-status {
+  opacity: 0.72;
+}
+
+.rhythm-footer {
+  margin-top: 12px;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+
+.rhythm-clear {
+  flex: 0 0 auto;
+  padding: 5px 7px;
+  font-size: 0.54rem;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -618,6 +807,31 @@ h2 {
 
   .focus-controls {
     flex-wrap: wrap;
+  }
+
+  .rhythm-form {
+    flex-wrap: wrap;
+  }
+
+  .rhythm-time-input {
+    flex: 0 0 92px;
+  }
+
+  .rhythm-title-input {
+    flex: 1 1 calc(100% - 100px);
+    width: auto;
+  }
+
+  .rhythm-add {
+    width: 100%;
+  }
+
+  .rhythm-item {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+
+  .rhythm-item-actions {
+    grid-column: 2;
   }
 
   .site-footer {

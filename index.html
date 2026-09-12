@@ -98,6 +98,29 @@
             <h2>今日節奏</h2>
             <p>看看一天如何流動，在忙碌與留白之間找到自己的速度。</p>
           </div>
+          <div class="rhythm-mode" id="rhythm-mode" aria-label="今日節奏行程管理器">
+            <div class="rhythm-heading">
+              <span class="rhythm-mode-title">Daily Rhythm</span>
+              <time id="rhythm-date" datetime=""></time>
+            </div>
+            <form class="rhythm-form" id="rhythm-form" novalidate>
+              <label class="sr-only" for="rhythm-time">行程時間</label>
+              <input class="rhythm-input rhythm-time-input" id="rhythm-time" type="time" min="00:00" max="23:59" required aria-describedby="rhythm-time-error">
+              <small class="rhythm-time-error" id="rhythm-time-error" role="alert" hidden>請輸入 24 小時制時間，例如 09:30</small>
+              <label class="sr-only" for="rhythm-title">行程名稱</label>
+              <input class="rhythm-input rhythm-title-input" id="rhythm-title" type="text" placeholder="行程名稱" required maxlength="80">
+              <button class="rhythm-control rhythm-add" id="rhythm-submit" type="submit">新增</button>
+            </form>
+            <div class="rhythm-list" id="rhythm-list" aria-live="polite"></div>
+            <div class="rhythm-empty" id="rhythm-empty">
+              <strong>No plans yet.</strong>
+              <span>Add something to your day.</span>
+            </div>
+            <div class="rhythm-footer">
+              <span class="rhythm-status" id="rhythm-status">今天還沒有安排。</span>
+              <button class="rhythm-control rhythm-clear" id="rhythm-clear" type="button" hidden>Clear all</button>
+            </div>
+          </div>
           <div class="card-footer">
             <span class="card-action">查看節奏</span>
             <span class="arrow" aria-hidden="true">↗</span>

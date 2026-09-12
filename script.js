@@ -16,14 +16,29 @@ const noteSaveStatus = document.querySelector("#note-save-status");
 const noteSavedAt = document.querySelector("#note-saved-at");
 const noteEmpty = document.querySelector("#note-empty");
 const noteContent = document.querySelector("#note-content");
+const rhythmCard = document.querySelector('[data-card="rhythm"]');
+const rhythmForm = document.querySelector("#rhythm-form");
+const rhythmTimeInput = document.querySelector("#rhythm-time");
+const rhythmTimeError = document.querySelector("#rhythm-time-error");
+const rhythmTitleInput = document.querySelector("#rhythm-title");
+const rhythmSubmitButton = document.querySelector("#rhythm-submit");
+const rhythmDateElement = document.querySelector("#rhythm-date");
+const rhythmList = document.querySelector("#rhythm-list");
+const rhythmEmpty = document.querySelector("#rhythm-empty");
+const rhythmStatus = document.querySelector("#rhythm-status");
+const rhythmClearButton = document.querySelector("#rhythm-clear");
 
 const NOTE_STORAGE_KEY = "daymark-note";
+const RHYTHM_STORAGE_KEY = "daymark-rhythm";
 
 const FOCUS_DURATION_SECONDS = 25 * 60;
 let focusRemainingSeconds = FOCUS_DURATION_SECONDS;
 let focusTimerId = null;
 let focusTimerEndAt = null;
 let focusStatus = "idle";
+let rhythmItems = [];
+let editingRhythmId = null;
+let rhythmTimeTouched = false;
 
 const dateFormatter = new Intl.DateTimeFormat("zh-TW", {
   year: "numeric",
@@ -218,6 +233,205 @@ function clearNote() {
   interactionNote.textContent = "靈感筆記已清空，可以重新開始。";
 }
 
+function getLocalDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function createRhythmId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `rhythm-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function sortRhythmItems(items) {
+  return [...items].sort((firstItem, secondItem) => firstItem.time.localeCompare(secondItem.time));
+}
+
+function saveRhythm() {
+  try {
+    localStorage.setItem(RHYTHM_STORAGE_KEY, JSON.stringify({
+      date: getLocalDateKey(),
+      items: sortRhythmItems(rhythmItems)
+    }));
+  } catch (error) {
+    rhythmStatus.textContent = "無法儲存今日行程。";
+  }
+}
+
+function renderRhythm() {
+  const sortedItems = sortRhythmItems(rhythmItems);
+  rhythmItems = sortedItems;
+  rhythmList.replaceChildren();
+  rhythmEmpty.hidden = sortedItems.length > 0;
+  rhythmClearButton.hidden = sortedItems.length === 0;
+  rhythmStatus.textContent = sortedItems.length > 0
+    ? `${sortedItems.length} ${sortedItems.length === 1 ? "plan" : "plans"} today.`
+    : "今天還沒有安排。";
+
+  sortedItems.forEach((item) => {
+    const itemElement = document.createElement("div");
+    itemElement.className = "rhythm-item";
+    itemElement.dataset.rhythmId = item.id;
+
+    const timeElement = document.createElement("time");
+    timeElement.className = "rhythm-item-time";
+    timeElement.dateTime = item.time;
+    timeElement.textContent = item.time;
+
+    const titleElement = document.createElement("span");
+    titleElement.className = "rhythm-item-title";
+    titleElement.textContent = item.title;
+
+    const actions = document.createElement("div");
+    actions.className = "rhythm-item-actions";
+
+    const editButton = document.createElement("button");
+    editButton.className = "rhythm-item-control rhythm-edit";
+    editButton.type = "button";
+    editButton.dataset.action = "edit";
+    editButton.textContent = "Edit";
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "rhythm-item-control rhythm-delete";
+    deleteButton.type = "button";
+    deleteButton.dataset.action = "delete";
+    deleteButton.textContent = "Delete";
+
+    actions.append(editButton, deleteButton);
+    itemElement.append(timeElement, titleElement, actions);
+    rhythmList.append(itemElement);
+  });
+}
+
+function loadRhythm() {
+  rhythmDateElement.textContent = new Intl.DateTimeFormat("zh-TW", {
+    year: "numeric",
+    month: "numeric",
+    day: "numeric"
+  }).format(new Date());
+  rhythmDateElement.dateTime = getLocalDateKey();
+
+  try {
+    const storedRhythm = localStorage.getItem(RHYTHM_STORAGE_KEY);
+    if (!storedRhythm) {
+      renderRhythm();
+      return;
+    }
+
+    const rhythm = JSON.parse(storedRhythm);
+    const validItems = Array.isArray(rhythm.items) && rhythm.items.every((item) => (
+      item && typeof item.id === "string" && typeof item.time === "string" &&
+      /^\d{2}:\d{2}$/.test(item.time) && typeof item.title === "string"
+    ));
+
+    rhythmItems = rhythm.date === getLocalDateKey() && validItems ? rhythm.items : [];
+    renderRhythm();
+  } catch (error) {
+    rhythmItems = [];
+    renderRhythm();
+  }
+}
+
+function isValidRhythmTime(value) {
+  const match = /^(\d{2}):(\d{2})$/.exec(value);
+  if (!match) {
+    return false;
+  }
+
+  return Number(match[1]) >= 0 && Number(match[1]) <= 23 && Number(match[2]) >= 0 && Number(match[2]) <= 59;
+}
+
+function setRhythmTimeError(showError) {
+  rhythmTimeInput.setAttribute("aria-invalid", String(showError));
+  rhythmTimeError.hidden = !showError;
+}
+
+function validateRhythmTime(showEmptyError = false) {
+  const isInvalid = !isValidRhythmTime(rhythmTimeInput.value);
+  const shouldShowError = isInvalid && (showEmptyError || rhythmTimeTouched);
+  setRhythmTimeError(shouldShowError);
+  return !isInvalid;
+}
+
+function submitRhythmItem(event) {
+  event.preventDefault();
+  rhythmTimeTouched = true;
+  const time = rhythmTimeInput.value;
+  const title = rhythmTitleInput.value.trim();
+
+  if (!validateRhythmTime(true) || !title) {
+    rhythmStatus.textContent = "請填寫時間與行程名稱。";
+    return;
+  }
+
+  if (editingRhythmId) {
+    rhythmItems = rhythmItems.map((item) => (
+      item.id === editingRhythmId ? { ...item, time, title } : item
+    ));
+    editingRhythmId = null;
+    rhythmSubmitButton.textContent = "新增";
+    rhythmStatus.textContent = "行程已更新。";
+  } else {
+    rhythmItems.push({ id: createRhythmId(), time, title });
+    rhythmStatus.textContent = "行程已新增。";
+  }
+
+  saveRhythm();
+  renderRhythm();
+  rhythmForm.reset();
+  rhythmTimeTouched = false;
+  setRhythmTimeError(false);
+  rhythmTimeInput.focus();
+}
+
+function editRhythmItem(id) {
+  const item = rhythmItems.find((rhythmItem) => rhythmItem.id === id);
+  if (!item) {
+    return;
+  }
+
+  editingRhythmId = id;
+  rhythmTimeInput.value = item.time;
+  rhythmTitleInput.value = item.title;
+  rhythmTimeTouched = false;
+  setRhythmTimeError(false);
+  rhythmSubmitButton.textContent = "儲存";
+  rhythmStatus.textContent = "正在編輯行程。";
+  rhythmTimeInput.focus();
+}
+
+function deleteRhythmItem(id) {
+  rhythmItems = rhythmItems.filter((item) => item.id !== id);
+  if (editingRhythmId === id) {
+    editingRhythmId = null;
+    rhythmForm.reset();
+    rhythmTimeTouched = false;
+    setRhythmTimeError(false);
+    rhythmSubmitButton.textContent = "新增";
+  }
+
+  saveRhythm();
+  renderRhythm();
+  rhythmStatus.textContent = "行程已刪除。";
+}
+
+function clearRhythm() {
+  rhythmItems = [];
+  editingRhythmId = null;
+  rhythmForm.reset();
+  rhythmTimeTouched = false;
+  setRhythmTimeError(false);
+  rhythmSubmitButton.textContent = "新增";
+  saveRhythm();
+  renderRhythm();
+  rhythmStatus.textContent = "今日行程已清除。";
+}
+
 function activateCard(card) {
   const isActive = card.classList.toggle("is-active");
   card.setAttribute("aria-pressed", String(isActive));
@@ -235,14 +449,14 @@ function activateCard(card) {
 
 cards.forEach((card) => {
   card.addEventListener("click", (event) => {
-    if (event.target.closest(".focus-timer, .note-mode")) {
+    if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode")) {
       return;
     }
 
     activateCard(card);
   });
   card.addEventListener("keydown", (event) => {
-    if (event.target.closest(".focus-timer, .note-mode")) {
+    if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode")) {
       return;
     }
 
@@ -265,13 +479,46 @@ cards.forEach((card) => {
   });
 });
 
+[rhythmSubmitButton, rhythmClearButton].forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+});
+
+rhythmList.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const button = event.target.closest("button[data-action]");
+  const itemElement = event.target.closest(".rhythm-item");
+  if (!button || !itemElement) {
+    return;
+  }
+
+  const itemId = itemElement.dataset.rhythmId;
+  if (button.dataset.action === "edit") {
+    editRhythmItem(itemId);
+  } else if (button.dataset.action === "delete") {
+    deleteRhythmItem(itemId);
+  }
+});
+
 focusStartButton.addEventListener("click", startFocusTimer);
 focusPauseButton.addEventListener("click", pauseFocusTimer);
 focusResetButton.addEventListener("click", resetFocusTimer);
 noteSaveButton.addEventListener("click", saveNote);
 noteClearButton.addEventListener("click", clearNote);
+rhythmForm.addEventListener("submit", submitRhythmItem);
+rhythmClearButton.addEventListener("click", clearRhythm);
+rhythmTimeInput.addEventListener("input", () => {
+  rhythmTimeTouched = true;
+  validateRhythmTime();
+});
+rhythmTimeInput.addEventListener("blur", () => {
+  rhythmTimeTouched = true;
+  validateRhythmTime(true);
+});
 
 updateDateTime();
 renderFocusTimer();
 loadNote();
+loadRhythm();
 setInterval(updateDateTime, 1000);
