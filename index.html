@@ -65,6 +65,23 @@
             <h2>靈感筆記</h2>
             <p>把腦中剛冒出的想法留下來，不讓它被下一個通知帶走。</p>
           </div>
+          <div class="note-mode" id="note-mode" aria-label="靈感筆記編輯器">
+            <label class="sr-only" for="note-input">靈感筆記內容</label>
+            <textarea class="note-input" id="note-input" rows="4" placeholder="寫下此刻的想法..."></textarea>
+            <div class="note-controls" aria-label="筆記控制">
+              <button class="note-control note-save" id="note-save" type="button">儲存</button>
+              <button class="note-control note-clear" id="note-clear" type="button">清除</button>
+            </div>
+            <div class="note-meta">
+              <span class="note-save-status" id="note-save-status">尚未儲存筆記</span>
+              <time class="note-saved-at" id="note-saved-at" datetime=""></time>
+            </div>
+            <div class="note-preview" aria-live="polite">
+              <span class="note-preview-label">CURRENT NOTE</span>
+              <p class="note-empty" id="note-empty">目前還沒有筆記。</p>
+              <p class="note-content" id="note-content"></p>
+            </div>
+          </div>
           <div class="card-footer">
             <span class="card-action">寫點什麼</span>
             <span class="arrow" aria-hidden="true">↗</span>
