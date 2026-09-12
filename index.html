@@ -41,9 +41,17 @@
             <h2>專注時段</h2>
             <p>留一段完整的時間，處理今天最值得完成的事。</p>
           </div>
-          <div class="card-footer">
-            <span class="card-action">開始專注</span>
-            <span class="arrow" aria-hidden="true">↗</span>
+          <div class="focus-timer" id="focus-timer" aria-label="專注計時器">
+            <div class="focus-timer-meta">
+              <span class="focus-status" id="focus-status">準備開始</span>
+              <span>25 MIN</span>
+            </div>
+            <time class="focus-time" id="focus-time" datetime="PT25M">25:00</time>
+            <div class="focus-controls" aria-label="專注計時器控制">
+              <button class="focus-control focus-start" id="focus-start" type="button">開始</button>
+              <button class="focus-control focus-pause" id="focus-pause" type="button" disabled>暫停</button>
+              <button class="focus-control focus-reset" id="focus-reset" type="button">重設</button>
+            </div>
           </div>
         </article>
 

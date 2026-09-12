@@ -2,6 +2,18 @@ const clockElement = document.querySelector("#clock");
 const dateElement = document.querySelector("#date");
 const cards = document.querySelectorAll(".dashboard-card");
 const interactionNote = document.querySelector("#interaction-note span:last-child");
+const focusCard = document.querySelector('[data-card="focus"]');
+const focusTimeElement = document.querySelector("#focus-time");
+const focusStatusElement = document.querySelector("#focus-status");
+const focusStartButton = document.querySelector("#focus-start");
+const focusPauseButton = document.querySelector("#focus-pause");
+const focusResetButton = document.querySelector("#focus-reset");
+
+const FOCUS_DURATION_SECONDS = 25 * 60;
+let focusRemainingSeconds = FOCUS_DURATION_SECONDS;
+let focusTimerId = null;
+let focusTimerEndAt = null;
+let focusStatus = "idle";
 
 const dateFormatter = new Intl.DateTimeFormat("zh-TW", {
   year: "numeric",
@@ -25,6 +37,100 @@ function updateDateTime() {
   dateElement.dateTime = now.toISOString().slice(0, 10);
 }
 
+function formatFocusTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function renderFocusTimer() {
+  const statusLabels = {
+    idle: "準備開始",
+    running: "專注中",
+    paused: "已暫停",
+    completed: "專注完成"
+  };
+
+  focusTimeElement.textContent = formatFocusTime(focusRemainingSeconds);
+  focusTimeElement.dateTime = `PT${Math.floor(focusRemainingSeconds / 60)}M${focusRemainingSeconds % 60}S`;
+  focusStatusElement.textContent = statusLabels[focusStatus];
+  focusCard.dataset.focusStatus = focusStatus;
+  focusStartButton.textContent = focusStatus === "paused" ? "繼續" : "開始";
+  focusStartButton.disabled = focusStatus === "running" || focusStatus === "completed";
+  focusPauseButton.disabled = focusStatus !== "running";
+  focusResetButton.disabled = focusStatus === "idle";
+}
+
+function clearFocusTimer() {
+  if (focusTimerId !== null) {
+    clearInterval(focusTimerId);
+    focusTimerId = null;
+  }
+}
+
+function completeFocusTimer() {
+  clearFocusTimer();
+  focusTimerEndAt = null;
+  focusRemainingSeconds = 0;
+  focusStatus = "completed";
+  renderFocusTimer();
+  interactionNote.textContent = "專注時段完成，做得很好。";
+}
+
+function updateFocusTimer() {
+  if (focusStatus !== "running" || focusTimerEndAt === null) {
+    return;
+  }
+
+  focusRemainingSeconds = Math.max(0, Math.ceil((focusTimerEndAt - Date.now()) / 1000));
+
+  if (focusRemainingSeconds === 0) {
+    completeFocusTimer();
+    return;
+  }
+
+  renderFocusTimer();
+}
+
+function startFocusTimer() {
+  if (focusStatus === "running" || focusRemainingSeconds === 0) {
+    return;
+  }
+
+  clearFocusTimer();
+  focusTimerEndAt = Date.now() + focusRemainingSeconds * 1000;
+  focusStatus = "running";
+  focusTimerId = setInterval(updateFocusTimer, 250);
+  renderFocusTimer();
+  interactionNote.textContent = "專注模式進行中，先把注意力留在眼前。";
+}
+
+function pauseFocusTimer() {
+  if (focusStatus !== "running") {
+    return;
+  }
+
+  updateFocusTimer();
+  if (focusStatus === "completed") {
+    return;
+  }
+
+  clearFocusTimer();
+  focusTimerEndAt = null;
+  focusStatus = "paused";
+  renderFocusTimer();
+  interactionNote.textContent = "專注模式已暫停，準備好時再繼續。";
+}
+
+function resetFocusTimer() {
+  clearFocusTimer();
+  focusTimerEndAt = null;
+  focusRemainingSeconds = FOCUS_DURATION_SECONDS;
+  focusStatus = "idle";
+  renderFocusTimer();
+  interactionNote.textContent = "選一張卡片，讓今天往前一步。";
+}
+
 function activateCard(card) {
   const isActive = card.classList.toggle("is-active");
   card.setAttribute("aria-pressed", String(isActive));
@@ -41,8 +147,18 @@ function activateCard(card) {
 }
 
 cards.forEach((card) => {
-  card.addEventListener("click", () => activateCard(card));
+  card.addEventListener("click", (event) => {
+    if (event.target.closest(".focus-timer")) {
+      return;
+    }
+
+    activateCard(card);
+  });
   card.addEventListener("keydown", (event) => {
+    if (event.target.closest(".focus-timer")) {
+      return;
+    }
+
     if (event.key === "Enter" || event.key === " ") {
       event.preventDefault();
       activateCard(card);
@@ -50,5 +166,16 @@ cards.forEach((card) => {
   });
 });
 
+[focusStartButton, focusPauseButton, focusResetButton].forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+});
+
+focusStartButton.addEventListener("click", startFocusTimer);
+focusPauseButton.addEventListener("click", pauseFocusTimer);
+focusResetButton.addEventListener("click", resetFocusTimer);
+
 updateDateTime();
+renderFocusTimer();
 setInterval(updateDateTime, 1000);

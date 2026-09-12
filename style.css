@@ -289,6 +289,94 @@ h2 {
   line-height: 1.6;
 }
 
+.focus-timer {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid currentColor;
+}
+
+.focus-timer-meta,
+.focus-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.focus-timer-meta {
+  color: currentColor;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.focus-status {
+  opacity: 0.78;
+}
+
+.focus-time {
+  display: block;
+  margin: 8px 0 17px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.4rem, 3.1vw, 3.4rem);
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+
+.focus-controls {
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.focus-control {
+  min-width: 52px;
+  padding: 8px 10px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  transition: background-color 180ms ease, color 180ms ease, opacity 180ms ease;
+}
+
+.focus-control:hover:not(:disabled),
+.focus-control:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.focus-control:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+}
+
+.card-coral .focus-control:hover:not(:disabled),
+.card-coral .focus-control:focus-visible {
+  background: var(--paper);
+  color: var(--wine);
+}
+
+.dashboard-card[data-focus-status="running"] .focus-status {
+  color: var(--wine);
+  opacity: 1;
+}
+
+.dashboard-card[data-focus-status="completed"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.dashboard-card[data-focus-status="completed"] .focus-status {
+  color: var(--ochre);
+  opacity: 1;
+}
+
 .card-footer {
   position: relative;
   z-index: 1;
@@ -397,6 +485,14 @@ h2 {
 
   .dashboard-card {
     min-height: 310px;
+  }
+
+  .focus-time {
+    font-size: 3rem;
+  }
+
+  .focus-controls {
+    flex-wrap: wrap;
   }
 
   .site-footer {
