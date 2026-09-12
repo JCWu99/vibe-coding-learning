@@ -127,18 +127,50 @@
           </div>
         </article>
 
-        <article class="dashboard-card card-lilac" tabindex="0" role="button" aria-pressed="false" data-card="reset" data-message="空間已清好。下一步，從一個小動作開始。">
+        <article class="dashboard-card card-lilac" tabindex="0" role="button" aria-pressed="false" data-card="review" data-message="回顧今天，為明天留下一點方向。">
           <div class="card-topline">
             <span class="card-index">04 / 04</span>
             <span class="card-icon" aria-hidden="true">↺</span>
           </div>
           <div class="card-content">
-            <p class="card-kicker">RESET SPACE</p>
-            <h2>清理一下</h2>
-            <p>關掉不需要的分頁，把注意力還給眼前真正重要的畫面。</p>
+            <p class="card-kicker">DAILY REVIEW</p>
+            <h2>今日回顧</h2>
+            <p>花一點時間，回頭看看今天。</p>
+          </div>
+          <div class="review-mode" id="review-mode" aria-label="今日回顧表單">
+            <div class="review-heading">
+              <span class="review-mode-title">Daily Review</span>
+              <span>今日回顧</span>
+            </div>
+            <p class="review-description">Take a moment to look back.</p>
+            <fieldset class="review-rating">
+              <legend>How was your day?</legend>
+              <div class="review-rating-options">
+                <button class="review-rating-button" type="button" data-rating="1" aria-label="1 分，很糟">1</button>
+                <button class="review-rating-button" type="button" data-rating="2" aria-label="2 分">2</button>
+                <button class="review-rating-button" type="button" data-rating="3" aria-label="3 分，普通">3</button>
+                <button class="review-rating-button" type="button" data-rating="4" aria-label="4 分">4</button>
+                <button class="review-rating-button" type="button" data-rating="5" aria-label="5 分，很好">5</button>
+              </div>
+            </fieldset>
+            <div class="review-fields">
+              <label for="review-went-well">What went well?</label>
+              <textarea id="review-went-well" rows="2" placeholder="今天做得不錯的事情..."></textarea>
+              <label for="review-attention">What needs attention?</label>
+              <textarea id="review-attention" rows="2" placeholder="今天需要留意的事情..."></textarea>
+              <label for="review-tomorrow">One thing for tomorrow</label>
+              <textarea id="review-tomorrow" rows="2" placeholder="明天最重要的一件事..."></textarea>
+            </div>
+            <div class="review-footer">
+              <span class="review-status" id="review-status">尚未儲存回顧</span>
+              <div class="review-actions">
+                <button class="review-control review-save" id="review-save" type="button">Save review</button>
+                <button class="review-control review-clear" id="review-clear" type="button">Clear review</button>
+              </div>
+            </div>
           </div>
           <div class="card-footer">
-            <span class="card-action">開始整理</span>
+            <span class="card-action">回顧今天</span>
             <span class="arrow" aria-hidden="true">↗</span>
           </div>
         </article>

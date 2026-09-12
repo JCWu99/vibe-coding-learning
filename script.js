@@ -27,9 +27,17 @@ const rhythmList = document.querySelector("#rhythm-list");
 const rhythmEmpty = document.querySelector("#rhythm-empty");
 const rhythmStatus = document.querySelector("#rhythm-status");
 const rhythmClearButton = document.querySelector("#rhythm-clear");
+const reviewSaveButton = document.querySelector("#review-save");
+const reviewClearButton = document.querySelector("#review-clear");
+const reviewStatus = document.querySelector("#review-status");
+const reviewRatingButtons = document.querySelectorAll(".review-rating-button");
+const reviewWentWellInput = document.querySelector("#review-went-well");
+const reviewAttentionInput = document.querySelector("#review-attention");
+const reviewTomorrowInput = document.querySelector("#review-tomorrow");
 
 const NOTE_STORAGE_KEY = "daymark-note";
 const RHYTHM_STORAGE_KEY = "daymark-rhythm";
+const REVIEW_STORAGE_KEY = "daymark-review";
 
 const FOCUS_DURATION_SECONDS = 25 * 60;
 let focusRemainingSeconds = FOCUS_DURATION_SECONDS;
@@ -39,6 +47,7 @@ let focusStatus = "idle";
 let rhythmItems = [];
 let editingRhythmId = null;
 let rhythmTimeTouched = false;
+let reviewRating = null;
 
 const dateFormatter = new Intl.DateTimeFormat("zh-TW", {
   year: "numeric",
@@ -437,6 +446,90 @@ function clearRhythm() {
   rhythmStatus.textContent = "今日行程已清除。";
 }
 
+function isValidReviewDate(value) {
+  return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
+}
+
+function isValidReviewRating(value) {
+  return value === null || (Number.isInteger(value) && value >= 1 && value <= 5);
+}
+
+function renderReview(review) {
+  reviewRating = review ? review.rating : null;
+  reviewRatingButtons.forEach((button) => {
+    const isSelected = Number(button.dataset.rating) === reviewRating;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+  reviewWentWellInput.value = review ? review.wentWell : "";
+  reviewAttentionInput.value = review ? review.attention : "";
+  reviewTomorrowInput.value = review ? review.tomorrow : "";
+  reviewStatus.textContent = review ? "已儲存回顧" : "尚未儲存回顧";
+}
+
+function loadReview() {
+  try {
+    const storedReview = localStorage.getItem(REVIEW_STORAGE_KEY);
+    if (!storedReview) {
+      renderReview(null);
+      return;
+    }
+
+    const review = JSON.parse(storedReview);
+    const isValid = review &&
+      isValidReviewDate(review.date) &&
+      review.date === getLocalDateKey() &&
+      isValidReviewRating(review.rating) &&
+      typeof review.wentWell === "string" &&
+      typeof review.attention === "string" &&
+      typeof review.tomorrow === "string" &&
+      (review.savedAt === undefined || (typeof review.savedAt === "string" && !Number.isNaN(Date.parse(review.savedAt))));
+
+    renderReview(isValid ? review : null);
+  } catch (error) {
+    renderReview(null);
+  }
+}
+
+function setReviewRating(rating) {
+  reviewRating = rating;
+  reviewRatingButtons.forEach((button) => {
+    const isSelected = Number(button.dataset.rating) === reviewRating;
+    button.classList.toggle("is-selected", isSelected);
+    button.setAttribute("aria-pressed", String(isSelected));
+  });
+}
+
+function saveReview() {
+  const review = {
+    date: getLocalDateKey(),
+    rating: reviewRating,
+    wentWell: reviewWentWellInput.value,
+    attention: reviewAttentionInput.value,
+    tomorrow: reviewTomorrowInput.value,
+    savedAt: new Date().toISOString()
+  };
+
+  try {
+    localStorage.setItem(REVIEW_STORAGE_KEY, JSON.stringify(review));
+    reviewStatus.textContent = "Review saved.";
+    interactionNote.textContent = "今天的回顧已留下來。";
+  } catch (error) {
+    reviewStatus.textContent = "Unable to save review.";
+  }
+}
+
+function clearReview() {
+  try {
+    localStorage.removeItem(REVIEW_STORAGE_KEY);
+    renderReview(null);
+    reviewStatus.textContent = "Review cleared.";
+    interactionNote.textContent = "今日回顧已清除。";
+  } catch (error) {
+    reviewStatus.textContent = "Unable to clear review.";
+  }
+}
+
 function activateCard(card) {
   const isActive = card.classList.toggle("is-active");
   card.setAttribute("aria-pressed", String(isActive));
@@ -454,14 +547,14 @@ function activateCard(card) {
 
 cards.forEach((card) => {
   card.addEventListener("click", (event) => {
-    if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode")) {
+    if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode, .review-mode")) {
       return;
     }
 
     activateCard(card);
   });
   card.addEventListener("keydown", (event) => {
-    if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode")) {
+    if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode, .review-mode")) {
       return;
     }
 
@@ -490,6 +583,19 @@ cards.forEach((card) => {
   });
 });
 
+reviewRatingButtons.forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+    setReviewRating(Number(button.dataset.rating));
+  });
+});
+
+[reviewSaveButton, reviewClearButton].forEach((button) => {
+  button.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+});
+
 rhythmList.addEventListener("click", (event) => {
   event.stopPropagation();
   const button = event.target.closest("button[data-action]");
@@ -513,6 +619,8 @@ noteSaveButton.addEventListener("click", saveNote);
 noteClearButton.addEventListener("click", clearNote);
 rhythmForm.addEventListener("submit", submitRhythmItem);
 rhythmClearButton.addEventListener("click", clearRhythm);
+reviewSaveButton.addEventListener("click", saveReview);
+reviewClearButton.addEventListener("click", clearReview);
 rhythmTimeInput.addEventListener("input", () => {
   rhythmTimeTouched = true;
   validateRhythmTime();
@@ -526,4 +634,5 @@ updateDateTime();
 renderFocusTimer();
 loadNote();
 loadRhythm();
+loadReview();
 setInterval(updateDateTime, 1000);

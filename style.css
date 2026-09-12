@@ -680,6 +680,346 @@ h2 {
   font-size: 0.54rem;
 }
 
+.reset-mode {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid currentColor;
+}
+
+.dashboard-card[data-card="reset"].is-active .reset-mode {
+  display: block;
+}
+
+.dashboard-card[data-card="reset"].is-active .card-footer {
+  display: none;
+}
+
+.reset-heading,
+.reset-footer,
+.reset-form,
+.reset-item {
+  display: flex;
+  align-items: center;
+}
+
+.reset-heading,
+.reset-footer {
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.reset-heading {
+  margin-bottom: 5px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.reset-mode-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.reset-description {
+  margin-bottom: 12px;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  opacity: 0.72;
+}
+
+.reset-form {
+  gap: 6px;
+  align-items: stretch;
+}
+
+.reset-input {
+  min-width: 0;
+  flex: 1 1 auto;
+  width: 0;
+  padding: 8px 9px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: rgba(233, 229, 220, 0.12);
+  color: inherit;
+  font: inherit;
+  font-size: 0.68rem;
+}
+
+.reset-input::placeholder {
+  color: currentColor;
+  opacity: 0.62;
+}
+
+.reset-input:focus-visible,
+.reset-control:focus-visible,
+.reset-checkbox:focus-visible,
+.reset-item-control:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.reset-control,
+.reset-item-control {
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.reset-control {
+  min-width: 48px;
+  padding: 8px 9px;
+}
+
+.reset-control:hover,
+.reset-control:focus-visible,
+.reset-item-control:hover,
+.reset-item-control:focus-visible {
+  background: var(--paper);
+  color: var(--wine);
+}
+
+.reset-list {
+  margin-top: 12px;
+}
+
+.reset-item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 7px 0;
+  border-top: 1px solid rgba(32, 29, 26, 0.2);
+}
+
+.reset-checkbox {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--wine);
+  cursor: pointer;
+}
+
+.reset-item-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.7rem;
+  line-height: 1.35;
+}
+
+.reset-item.is-complete .reset-item-title {
+  opacity: 0.58;
+  text-decoration: line-through;
+}
+
+.reset-item-control {
+  padding: 5px 6px;
+  font-size: 0.54rem;
+}
+
+.reset-empty {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 12px;
+  padding: 13px 0;
+  border-top: 1px solid rgba(32, 29, 26, 0.2);
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.reset-empty[hidden] {
+  display: none;
+}
+
+.reset-empty span,
+.reset-status {
+  opacity: 0.72;
+}
+
+.reset-footer {
+  margin-top: 12px;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+
+.reset-today {
+  flex: 0 0 auto;
+  padding: 5px 7px;
+  font-size: 0.54rem;
+}
+
+.review-mode {
+  position: relative;
+  z-index: 1;
+  display: none;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid currentColor;
+}
+
+.dashboard-card[data-card="review"].is-active .review-mode {
+  display: block;
+}
+
+.dashboard-card[data-card="review"].is-active .card-footer {
+  display: none;
+}
+
+.review-heading,
+.review-footer,
+.review-actions {
+  display: flex;
+  align-items: center;
+}
+
+.review-heading,
+.review-footer {
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.review-heading {
+  margin-bottom: 5px;
+  font-size: 0.6rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.review-mode-title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.review-description {
+  margin-bottom: 12px;
+  font-size: 0.66rem;
+  line-height: 1.35;
+  opacity: 0.72;
+}
+
+.review-rating {
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+
+.review-rating legend {
+  margin-bottom: 7px;
+  padding: 0;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.review-rating-options {
+  display: flex;
+  gap: 6px;
+}
+
+.review-rating-button,
+.review-control {
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.62rem;
+  font-weight: 800;
+}
+
+.review-rating-button {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+}
+
+.review-rating-button:hover,
+.review-rating-button:focus-visible,
+.review-rating-button.is-selected,
+.review-control:hover,
+.review-control:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.review-fields {
+  display: grid;
+  gap: 5px;
+}
+
+.review-fields label {
+  margin-top: 4px;
+  font-size: 0.6rem;
+  font-weight: 800;
+}
+
+.review-fields textarea {
+  display: block;
+  width: 100%;
+  resize: vertical;
+  padding: 7px 8px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: rgba(233, 229, 220, 0.12);
+  color: inherit;
+  font: inherit;
+  font-size: 0.66rem;
+  line-height: 1.35;
+}
+
+.review-fields textarea::placeholder {
+  color: currentColor;
+  opacity: 0.62;
+}
+
+.review-fields textarea:focus-visible,
+.review-control:focus-visible,
+.review-rating-button:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
+}
+
+.review-footer {
+  align-items: flex-end;
+  margin-top: 12px;
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+}
+
+.review-status {
+  max-width: 88px;
+  opacity: 0.72;
+}
+
+.review-actions {
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.review-control {
+  padding: 6px 7px;
+  font-size: 0.54rem;
+  letter-spacing: 0.04em;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -832,6 +1172,41 @@ h2 {
 
   .rhythm-item-actions {
     grid-column: 2;
+  }
+
+  .reset-form {
+    flex-wrap: wrap;
+  }
+
+  .reset-input {
+    flex: 1 1 calc(100% - 60px);
+    width: auto;
+  }
+
+  .reset-add {
+    flex: 0 0 48px;
+  }
+
+  .reset-item {
+    grid-template-columns: 18px minmax(0, 1fr);
+  }
+
+  .reset-item-control {
+    grid-column: 2;
+    justify-self: start;
+  }
+
+  .review-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .review-status {
+    max-width: none;
+  }
+
+  .review-actions {
+    justify-content: flex-start;
   }
 
   .site-footer {
