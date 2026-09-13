@@ -1,3 +1,4 @@
+// Shared DOM / Constants
 const clockElement = document.querySelector("#clock");
 const dateElement = document.querySelector("#date");
 const cards = document.querySelectorAll(".dashboard-card");
@@ -49,6 +50,7 @@ let editingRhythmId = null;
 let rhythmTimeTouched = false;
 let reviewRating = null;
 
+// Page Clock
 const dateFormatter = new Intl.DateTimeFormat("zh-TW", {
   year: "numeric",
   month: "long",
@@ -79,6 +81,7 @@ function updateDateTime() {
   dateElement.dateTime = now.toISOString().slice(0, 10);
 }
 
+// Focus Mode
 function formatFocusTime(totalSeconds) {
   const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");
@@ -173,6 +176,7 @@ function resetFocusTimer() {
   interactionNote.textContent = "選一張卡片，讓今天往前一步。";
 }
 
+// Quick Capture
 function renderNote(note) {
   const hasNote = Boolean(note && note.text);
 
@@ -242,6 +246,7 @@ function clearNote() {
   interactionNote.textContent = "靈感筆記已清空，可以重新開始。";
 }
 
+// Daily Rhythm
 function getLocalDateKey(date = new Date()) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -446,6 +451,7 @@ function clearRhythm() {
   rhythmStatus.textContent = "今日行程已清除。";
 }
 
+// Daily Review
 function isValidReviewDate(value) {
   return typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
 }
@@ -530,6 +536,7 @@ function clearReview() {
   }
 }
 
+// Shared Card Interaction
 function activateCard(card) {
   const isActive = card.classList.toggle("is-active");
   card.setAttribute("aria-pressed", String(isActive));
@@ -545,6 +552,7 @@ function activateCard(card) {
     : "選一張卡片，讓今天往前一步。";
 }
 
+// Event Listeners
 cards.forEach((card) => {
   card.addEventListener("click", (event) => {
     if (event.target.closest(".focus-timer, .note-mode, .rhythm-mode, .review-mode")) {
@@ -630,6 +638,7 @@ rhythmTimeInput.addEventListener("blur", () => {
   validateRhythmTime(true);
 });
 
+// Initialization
 updateDateTime();
 renderFocusTimer();
 loadNote();
