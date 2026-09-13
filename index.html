@@ -70,16 +70,15 @@
             <textarea class="note-input" id="note-input" rows="4" placeholder="寫下此刻的想法..."></textarea>
             <div class="note-controls" aria-label="筆記控制">
               <button class="note-control note-save" id="note-save" type="button">儲存</button>
-              <button class="note-control note-clear" id="note-clear" type="button">清除</button>
+              <button class="note-control note-clear" id="note-clear" type="button">Clear All</button>
             </div>
             <div class="note-meta">
               <span class="note-save-status" id="note-save-status">尚未儲存筆記</span>
-              <time class="note-saved-at" id="note-saved-at" datetime=""></time>
             </div>
             <div class="note-preview" aria-live="polite">
               <span class="note-preview-label">CURRENT NOTE</span>
               <p class="note-empty" id="note-empty">目前還沒有筆記。</p>
-              <p class="note-content" id="note-content"></p>
+              <div class="note-list" id="note-list"></div>
             </div>
           </div>
           <div class="card-footer">

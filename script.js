@@ -14,9 +14,8 @@ const noteInput = document.querySelector("#note-input");
 const noteSaveButton = document.querySelector("#note-save");
 const noteClearButton = document.querySelector("#note-clear");
 const noteSaveStatus = document.querySelector("#note-save-status");
-const noteSavedAt = document.querySelector("#note-saved-at");
 const noteEmpty = document.querySelector("#note-empty");
-const noteContent = document.querySelector("#note-content");
+const noteList = document.querySelector("#note-list");
 const rhythmCard = document.querySelector('[data-card="rhythm"]');
 const rhythmForm = document.querySelector("#rhythm-form");
 const rhythmTimeInput = document.querySelector("#rhythm-time");
@@ -45,6 +44,7 @@ let focusRemainingSeconds = FOCUS_DURATION_SECONDS;
 let focusTimerId = null;
 let focusTimerEndAt = null;
 let focusStatus = "idle";
+let notes = [];
 let rhythmItems = [];
 let editingRhythmId = null;
 let rhythmTimeTouched = false;
@@ -177,35 +177,83 @@ function resetFocusTimer() {
 }
 
 // Quick Capture
-function renderNote(note) {
-  const hasNote = Boolean(note && note.text);
+function createNoteId() {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
 
-  noteInput.value = hasNote ? note.text : "";
-  noteContent.textContent = hasNote ? note.text : "";
-  noteEmpty.hidden = hasNote;
-  noteContent.hidden = !hasNote;
-  noteSavedAt.textContent = hasNote ? `最後儲存 ${noteDateFormatter.format(new Date(note.savedAt))}` : "";
-  noteSavedAt.dateTime = hasNote ? new Date(note.savedAt).toISOString() : "";
-  noteSaveStatus.textContent = hasNote ? "已儲存" : "尚未儲存筆記";
+  return `note-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function isValidNote(note) {
+  return note && typeof note.id === "string" && note.id.trim() !== "" &&
+    typeof note.text === "string" && note.text.trim() !== "" &&
+    typeof note.savedAt === "string" && !Number.isNaN(Date.parse(note.savedAt));
+}
+
+function renderNote() {
+  noteInput.value = "";
+  noteEmpty.hidden = notes.length > 0;
+  noteList.replaceChildren();
+  noteSaveStatus.textContent = notes.length > 0 ? `${notes.length} 筆筆記` : "尚未儲存筆記";
+
+  notes.forEach((note) => {
+    const noteElement = document.createElement("article");
+    noteElement.className = "note-item";
+    noteElement.dataset.noteId = note.id;
+
+    const textElement = document.createElement("p");
+    textElement.className = "note-item-text";
+    textElement.textContent = note.text;
+
+    const metaElement = document.createElement("div");
+    metaElement.className = "note-item-meta";
+
+    const savedAtElement = document.createElement("time");
+    savedAtElement.className = "note-item-saved-at";
+    savedAtElement.dateTime = note.savedAt;
+    savedAtElement.textContent = noteDateFormatter.format(new Date(note.savedAt));
+
+    const deleteButton = document.createElement("button");
+    deleteButton.className = "note-item-delete";
+    deleteButton.type = "button";
+    deleteButton.dataset.action = "delete";
+    deleteButton.textContent = "Delete";
+
+    metaElement.append(savedAtElement, deleteButton);
+    noteElement.append(textElement, metaElement);
+    noteList.append(noteElement);
+  });
 }
 
 function loadNote() {
   try {
     const storedNote = localStorage.getItem(NOTE_STORAGE_KEY);
     if (!storedNote) {
-      renderNote(null);
+      notes = [];
+      renderNote();
       return;
     }
 
-    const note = JSON.parse(storedNote);
-    if (typeof note.text !== "string" || typeof note.savedAt !== "string" || Number.isNaN(Date.parse(note.savedAt))) {
-      renderNote(null);
+    const parsedNotes = JSON.parse(storedNote);
+    if (Array.isArray(parsedNotes)) {
+      notes = parsedNotes.filter(isValidNote);
+      renderNote();
       return;
     }
 
-    renderNote(note);
+    const migratedNote = parsedNotes && { ...parsedNotes, id: createNoteId() };
+    if (isValidNote(migratedNote)) {
+      notes = [migratedNote];
+      localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify(notes));
+    } else {
+      notes = [];
+    }
+
+    renderNote();
   } catch (error) {
-    renderNote(null);
+    notes = [];
+    renderNote();
   }
 }
 
@@ -219,13 +267,15 @@ function saveNote() {
   }
 
   const note = {
+    id: createNoteId(),
     text,
     savedAt: new Date().toISOString()
   };
 
   try {
-    localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify(note));
-    renderNote(note);
+    notes = [note, ...notes];
+    localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify(notes));
+    renderNote();
     noteSaveStatus.textContent = "筆記已儲存";
     interactionNote.textContent = "靈感已留下來，之後可以繼續補充。";
   } catch (error) {
@@ -235,15 +285,23 @@ function saveNote() {
 
 function clearNote() {
   try {
+    notes = [];
     localStorage.removeItem(NOTE_STORAGE_KEY);
   } catch (error) {
     noteSaveStatus.textContent = "無法清除筆記";
     return;
   }
 
-  renderNote(null);
+  renderNote();
   noteSaveStatus.textContent = "筆記已清除";
   interactionNote.textContent = "靈感筆記已清空，可以重新開始。";
+}
+
+function deleteNote(id) {
+  notes = notes.filter((note) => note.id !== id);
+  localStorage.setItem(NOTE_STORAGE_KEY, JSON.stringify(notes));
+  renderNote();
+  interactionNote.textContent = "筆記已刪除。";
 }
 
 // Daily Rhythm
@@ -583,6 +641,15 @@ cards.forEach((card) => {
   button.addEventListener("click", (event) => {
     event.stopPropagation();
   });
+});
+
+noteList.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const button = event.target.closest('button[data-action="delete"]');
+  const noteElement = event.target.closest(".note-item");
+  if (button && noteElement) {
+    deleteNote(noteElement.dataset.noteId);
+  }
 });
 
 [rhythmSubmitButton, rhythmClearButton].forEach((button) => {

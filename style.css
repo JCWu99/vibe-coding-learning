@@ -461,10 +461,6 @@ h2 {
   font-weight: 800;
 }
 
-.note-saved-at {
-  text-align: right;
-}
-
 .note-preview {
   margin-top: 13px;
   padding-top: 10px;
@@ -479,17 +475,71 @@ h2 {
   letter-spacing: 0.12em;
 }
 
-.note-empty,
-.note-content {
+.note-empty {
   margin: 0;
   font-size: 0.72rem;
   line-height: 1.45;
-  white-space: pre-wrap;
-  word-break: break-word;
 }
 
 .note-empty {
   opacity: 0.7;
+}
+
+.note-list {
+  display: grid;
+  gap: 10px;
+}
+
+.note-item {
+  padding-top: 10px;
+  border-top: 1px solid rgba(233, 229, 220, 0.42);
+}
+
+.note-item-text {
+  margin: 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.note-item-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  color: currentColor;
+  font-size: 0.56rem;
+  letter-spacing: 0.05em;
+}
+
+.note-item-saved-at {
+  opacity: 0.7;
+}
+
+.note-item-delete {
+  padding: 5px 7px;
+  border: 1px solid currentColor;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.54rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+}
+
+.note-item-delete:hover,
+.note-item-delete:focus-visible {
+  background: var(--paper);
+  color: var(--wine);
+}
+
+.note-item-delete:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 3px;
 }
 
 .rhythm-mode {
