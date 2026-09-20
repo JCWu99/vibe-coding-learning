@@ -182,8 +182,9 @@ h1 em {
   display: block;
   margin-top: 13px;
   color: var(--muted);
-  font-size: 0.78rem;
-  letter-spacing: 0.08em;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
 }
 
 .dashboard-grid {
