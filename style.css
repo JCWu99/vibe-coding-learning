@@ -1005,6 +1005,7 @@ h2 {
 
   .dashboard-grid {
     grid-template-columns: 1fr;
+    row-gap: 8px;
   }
 
   .dashboard-card {
@@ -1012,15 +1013,29 @@ h2 {
     padding: 18px 17px 16px;
   }
 
+  .dashboard-card:not(.is-active) {
+    min-height: 0;
+    padding: 10px 12px 9px;
+  }
+
   .dashboard-card:not(.is-active) .card-content {
-    padding: 22px 0 18px;
+    padding: 6px 0 5px;
   }
 
   .dashboard-card:not(.is-active) .card-content p:last-child {
     max-width: 260px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .dashboard-card:not(.is-active) .focus-timer {
+    display: none;
   }
 
   .dashboard-card.is-active {
+    min-height: 0;
     transform: translateY(-4px);
   }
 
